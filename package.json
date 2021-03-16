@@ -1,5 +1,10 @@
 {
-	"browserslist": "last 1 versions",
+	"name": "affiliate-portal-tabs",
+	"version": "1.0.0",
+	"homepage": "https://werdswords.com/plugins/affiliate-portal-tabs/",
+	"description": "",
+	"main": "Gruntfile.js",
+	"author": "Drew Jaynes",
 	"Dependencies": {
 		"grunt": "^1.0.1",
 		"grunt-cli": "latest"
