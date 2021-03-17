@@ -1,28 +1,22 @@
 <?php
 /**
- * Plugin Name: AffiliateWP - Affiliate Area Tabs
- * Plugin URI: https://affiliatewp.com/add-ons/official-free/affiliate-area-tabs/
- * Description: Add and reorder tabs in the Affiliate Area
- * Author: Sandhills Development, LLC
- * Author URI: https://sandhillsdev.com
- * Version: 1.2.8
- * Text Domain: affiliatewp-affiliate-area-tabs
+ * Plugin Name: Affiliate Portal Tabs for AffiliateWP
+ * Plugin URI: https://werdswords.com/plugins/affiliate-portal-tabs/
+ * Description: Manage built-in tabs and external links in the Affiliate Portal
+ * Author: Drew Jaynes
+ * Author URI: https://werdswords.com/
+ * Version: 1.0.0
+ * Text Domain: affiliate-portal-tabs
  * Domain Path: languages
  *
- * AffiliateWP is distributed under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License, or
- * any later version.
+ * This plugin is a fork of the Affiliate Area Tabs plugin Copyright (c) 2021 Sandhills Development, LLC
  *
- * AffiliateWP is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with AffiliateWP. If not, see <http://www.gnu.org/licenses/>.
+ * Affiliate Portal Tabs is distributed under the terms of the GNU General Public License
+ * as published by the Free Software Foundation, either version 2 of the License,
+ * or any later version.
  */
 
-// Exit if accessed directly
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( ! class_exists( 'AffiliateWP_Affiliate_Area_Tabs' ) ) {

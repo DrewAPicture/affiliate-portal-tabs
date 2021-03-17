@@ -3,7 +3,7 @@
  * Activation handler
  *
  * @package     AffiliateWP\ActivationHandler
- * @since       1.0.0
+ * @since       1.0
  */
 
 
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 /**
  * AffiliateWP Activation Handler Class
  *
- * @since       1.0.0
+ * @since       1.0
  */
 class AffiliateWP_Activation {
 
@@ -24,7 +24,7 @@ class AffiliateWP_Activation {
      * Setup the activation class
      *
      * @access      public
-     * @since       1.0.0
+     * @since       1.0
      * @return      void
      */
     public function __construct( $plugin_path, $plugin_file ) {
@@ -42,13 +42,14 @@ class AffiliateWP_Activation {
 
         // Set plugin name
         if ( isset( $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'] ) ) {
-            $this->plugin_name = str_replace( 'AffiliateWP - ', '', $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'] );
+            $this->plugin_name = $plugins[$this->plugin_path . '/' . $this->plugin_file]['Name'];
         } else {
-            $this->plugin_name = __( 'This plugin', 'affiliatewp-affiliate-area-tabs' );
+            $this->plugin_name = __( 'This plugin', 'affiliatewp-afgf' );
         }
 
         // Is AffiliateWP installed?
         foreach ( $plugins as $plugin_path => $plugin ) {
+            
             if ( $plugin['Name'] == 'AffiliateWP' ) {
                 $this->has_affiliatewp = true;
                 break;
@@ -58,10 +59,10 @@ class AffiliateWP_Activation {
 
 
     /**
-     * Process plugin deactivation
+     * Show notice
      *
      * @access      public
-     * @since       1.0.0
+     * @since       1.0
      * @return      void
      */
     public function run() {
@@ -70,41 +71,19 @@ class AffiliateWP_Activation {
     }
 
     /**
-     * PHP requirements
-     *
-     * @access      public
-     * @since       1.1.3
-     * @return      void
-     */
-    public function below_php_version() {
-        add_action( 'admin_notices', array( $this, 'below_php_version_notice' ) );
-    }
-
-    /**
      * Display notice if AffiliateWP isn't installed
      *
      * @access      public
-     * @since       1.0.0
+     * @since       1.0
      * @return      string The notice to display
      */
     public function missing_affiliatewp_notice() {
 
         if ( $this->has_affiliatewp ) {
-           echo '<div class="error"><p>' .  $this->plugin_name . ' ' . sprintf( __( 'requires %s. Please activate it to continue.', 'affiliatewp-affiliate-area-tabs' ), '<a href="https://affiliatewp.com/" target="_blank">AffiliateWP</a>' ) . '</p></div>';
+           echo '<div class="error"><p>' . sprintf( __( '%s requires %s. Please activate it to continue.', 'affiliatewp-afgf' ), $this->plugin_name, '<a href="https://affiliatewp.com/" title="AffiliateWP" target="_blank">AffiliateWP</a>' ) . '</p></div>'; 
 
         } else {
-            echo '<div class="error"><p>' . $this->plugin_name . ' ' . sprintf( __( 'requires %s. Please install it to continue.', 'affiliatewp-affiliate-area-tabs' ), '<a href="https://affiliatewp.com/" target="_blank">AffiliateWP</a>' ) . '</p></div>';
+            echo '<div class="error"><p>' . sprintf( __( '%s requires %s. Please install it to continue.', 'affiliatewp-afgf' ), $this->plugin_name, '<a href="https://affiliatewp.com/" title="AffiliateWP" target="_blank">AffiliateWP</a>' ) . '</p></div>';
         }
-    }
-
-    /**
-     * Below PHP 5.3 admin notice
-     *
-     * @access      public
-     * @since       1.1.3
-     * @return      string The notice to display
-     */
-    public function below_php_version_notice() {
-        echo '<div class="error"><p>' . sprintf( __( 'Your version of PHP is below the minimum version of PHP required by %s. Please contact your host and request that your version be upgraded to 5.3 or later.', 'affiliatewp-affiliate-area-tabs' ), $this->plugin_name ) . '</p></div>';
     }
 }
