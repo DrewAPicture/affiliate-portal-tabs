@@ -14,7 +14,7 @@ Add and reorder tabs in AffiliateWP's new Affiliate Portal pro add-on.
 
 > This plugin requires [AffiliateWP](https://affiliatewp.com/ "AffiliateWP") and the [AffiliateWP - Affiliate Portal](https://affiliatewp.com/add-ons/pro/affiliate-portal "AffiliateWP - Affiliate Portal") pro add-on in order to function.
 
-Affiliate Area Tabs allows you to manage built-in and custom tabs in the Affiliate Portal. Each custom tab can be externally linked to a WordPress page.
+Affiliate Portal Tabs allows you to manage built-in and custom tabs in the Affiliate Portal. Each custom tab can be externally linked to a WordPress page.
 
 Note: The site admin will need to manage affiliate access for custom tabs linking to external pages.
 
