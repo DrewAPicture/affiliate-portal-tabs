@@ -1,125 +1,141 @@
 <?php
 /**
- * Plugin Name: Affiliate Portal Tabs for AffiliateWP
- * Plugin URI: https://werdswords.com/plugins/affiliate-portal-tabs/
- * Description: Manage built-in tabs and external links in the Affiliate Portal
- * Author: Drew Jaynes
- * Author URI: https://werdswords.com/
- * Version: 1.0.0
- * Text Domain: affiliate-portal-tabs
- * Domain Path: languages
+ * Affiliate Portal Tabs Plugin Bootstrap
  *
- * This plugin is a fork of the Affiliate Area Tabs plugin Copyright (c) 2021 Sandhills Development, LLC
- *
- * Affiliate Portal Tabs is distributed under the terms of the GNU General Public License
- * as published by the Free Software Foundation, either version 2 of the License,
- * or any later version.
+ * @package     Affiliate Portal Tabs
+ * @subpackage  Core
+ * @copyright   Copyright (c) 2021, Drew A Picture Media, LLC
+ * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
+ * @since       1.0.0
  */
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! class_exists( 'AffiliateWP_Affiliate_Area_Tabs' ) ) {
+use WerdsWords\Core;
 
-	final class AffiliateWP_Affiliate_Area_Tabs {
+if ( ! class_exists( 'WerdsWords_Affiliate_Portal_Tabs' ) ) {
+
+	/**
+	 * Main plugin bootstrap class for Affiliate Portal Tabs.
+	 *
+	 * @since 1.0.0
+	 * @final
+	 */
+	final class WerdsWords_Affiliate_Portal_Tabs {
 
 		/**
-		 * Holds the instance
+		 * The main static plugin instance.
 		 *
-		 * Ensures that only one instance of AffiliateWP_Affiliate_Area_Tabs exists in memory at any one
-		 * time and it also prevents needing to define globals all over the place.
-		 *
-		 * TL;DR This is a static property property that holds the singleton instance.
-		 *
-		 * @var object
+		 * @since 1.0.0
+		 * @var   WerdsWords_Affiliate_Portal_Tabs
 		 * @static
-		 * @since 1.0
 		 */
 		private static $instance;
 
 		/**
-		 * The version number of AffiliateWP
+		 * Version.
 		 *
-		 * @since 1.0
+		 * @since 1.0.0
 		 */
-		private $version = '1.2.8';
+		private $version = '1.0.0';
 
 		/**
-		 * The functions instance variable
+		 * Main plugin file.
 		 *
-		 * @var object
-		 * @since 1.2
+		 * @since 1.0.0
+		 * @var   string
 		 */
-		public $functions;
+		private $file = '';
 
 		/**
-		 * Main AffiliateWP_Affiliate_Area_Tabs Instance
+		 * Instance of the assets loader.
 		 *
-		 * Insures that only one instance of AffiliateWP_Affiliate_Area_Tabs exists in memory at any one
-		 * time. Also prevents needing to define globals all over the place.
-		 *
-		 * @since 1.0
-		 * @static var array $instance
-		 * @return The one true AffiliateWP_Affiliate_Area_Tabs
+		 * @since 1.0.0
+		 * @var   Core\Assets_Loader
 		 */
-		public static function instance() {
+		public $assets;
 
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof AffiliateWP_Affiliate_Area_Tabs ) ) {
+		/**
+		 * Instance of the admin class.
+		 *
+		 * @since  1.0.0
+		 * @var    \WerdsWords\Core\Admin
+		 */
+		public $admin;
 
-				self::$instance = new AffiliateWP_Affiliate_Area_Tabs;
+		/**
+		 * Retrieves an instance of the plugin.
+		 *
+		 * @since 1.0.0
+		 * @static
+		 *
+		 * @since 1.0.0
+		 * @static
+		 *
+		 * @param string $file Main plugin file.
+		 * @return \WerdsWords_Affiliate_Portal_Tabs Bootstrap instance.
+		 */
+		public static function instance( $file = null ) {
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WerdsWords_Affiliate_Portal_Tabs ) ) {
+
+				self::$instance       = new \WerdsWords_Affiliate_Portal_Tabs;
+				self::$instance->file = $file;
+
 				self::$instance->setup_constants();
-				self::$instance->load_textdomain();
 				self::$instance->includes();
+				self::$instance->init();
 				self::$instance->hooks();
-				self::$instance->functions = new AffiliateWP_Affiliate_Area_Tabs_Functions;
-
+				self::$instance->setup_objects();
 			}
 
 			return self::$instance;
 		}
 
 		/**
-		 * Throw error on object clone
+		 * Throws an error on object clone.
 		 *
 		 * The whole idea of the singleton design pattern is that there is a single
 		 * object therefore, we don't want the object to be cloned.
 		 *
-		 * @since 1.0.0
 		 * @access protected
+		 * @since  1.0.0
+		 *
 		 * @return void
 		 */
-		public function __clone() {
+		protected function __clone() {
 			// Cloning instances of the class is forbidden
-			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'affiliatewp-affiliate-area-tabs' ), '1.0' );
+			_doing_it_wrong( __FUNCTION__, __( 'This object cannot be cloned.', 'affiliate-portal-tabs' ), '1.0.0' );
 		}
 
 		/**
-		 * Disable unserializing of the class
+		 * Disables unserializing of the class.
 		 *
-		 * @since 1.0.0
 		 * @access protected
+		 * @since  1.0.0
+		 *
 		 * @return void
 		 */
-		public function __wakeup() {
+		protected function __wakeup() {
 			// Unserializing instances of the class is forbidden
-			_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'affiliatewp-affiliate-area-tabs' ), '1.0' );
+			_doing_it_wrong( __FUNCTION__, __( 'This class cannot be unserialized.', 'affiliate-portal-tabs' ), '1.0.0' );
 		}
 
 		/**
-		 * Constructor Function
+		 * Sets up the class.
 		 *
-		 * @since 1.0.0
 		 * @access private
+		 * @since  1.0.0
 		 */
 		private function __construct() {
 			self::$instance = $this;
 		}
 
 		/**
-		 * Reset the instance of the class
+		 * Resets the instance of the class.
 		 *
-		 * @since 1.0.0
 		 * @access public
+		 * @since  1.0.0
 		 * @static
 		 */
 		public static function reset() {
@@ -130,124 +146,81 @@ if ( ! class_exists( 'AffiliateWP_Affiliate_Area_Tabs' ) ) {
 		 * Setup plugin constants
 		 *
 		 * @access private
-		 * @since 1.0.0
+		 * @since  1.0.0
+		 *
 		 * @return void
 		 */
 		private function setup_constants() {
 			// Plugin version
-			if ( ! defined( 'AFFWP_AAT_VERSION' ) ) {
-				define( 'AFFWP_AAT_VERSION', $this->version );
+			if ( ! defined( 'WW_APT_VERSION' ) ) {
+				define( 'WW_APT_VERSION', $this->version );
 			}
 
 			// Plugin Folder Path
-			if ( ! defined( 'AFFWP_AAT_PLUGIN_DIR' ) ) {
-				define( 'AFFWP_AAT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+			if ( ! defined( 'WW_APT_PLUGIN_DIR' ) ) {
+				define( 'WW_APT_PLUGIN_DIR', plugin_dir_path( $this->file ) );
 			}
 
 			// Plugin Folder URL
-			if ( ! defined( 'AFFWP_AAT_PLUGIN_URL' ) ) {
-				define( 'AFFWP_AAT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+			if ( ! defined( 'WW_APT_PLUGIN_URL' ) ) {
+				define( 'WW_APT_PLUGIN_URL', plugin_dir_url( $this->file ) );
 			}
 
 			// Plugin Root File
-			if ( ! defined( 'AFFWP_AAT_PLUGIN_FILE' ) ) {
-				define( 'AFFWP_AAT_PLUGIN_FILE', __FILE__ );
+			if ( ! defined( 'WW_APT_PLUGIN_FILE' ) ) {
+				define( 'WW_APT_PLUGIN_FILE', $this->file );
 			}
+
 		}
 
 		/**
-		 * Loads the plugin language files
+		 * Include necessary files.
+		 *
+		 * @access private
+		 * @since  1.0.0
+		 *
+		 * @return void
+		 */
+		private function includes() {
+			// Bring in the autoloader.
+			require_once __DIR__ . '/lib/autoload.php';
+		}
+
+		/**
+		 * Initializes the plugin.
+		 *
+		 * @since 1.0.0
+		 */
+		private function init() {}
+
+		/**
+		 * Setup all objects
 		 *
 		 * @access public
 		 * @since 1.0.0
 		 * @return void
 		 */
-		public function load_textdomain() {
-
-			// Set filter for plugin's languages directory
-			$lang_dir = dirname( plugin_basename( __FILE__ ) ) . '/languages/';
-			$lang_dir = apply_filters( 'affiliatewp_affiliate_area_tabs_languages_directory', $lang_dir );
-
-			// Traditional WordPress plugin locale filter
-			$locale   = apply_filters( 'plugin_locale',  get_locale(), 'affiliatewp-affiliate-area-tabs' );
-			$mofile   = sprintf( '%1$s-%2$s.mo', 'affiliatewp-affiliate-area-tabs', $locale );
-
-			// Setup paths to current locale file
-			$mofile_local  = $lang_dir . $mofile;
-			$mofile_global = WP_LANG_DIR . '/affiliatewp-affiliate-area-tabs/' . $mofile;
-
-			if ( file_exists( $mofile_global ) ) {
-				// Look in global /wp-content/languages/affiliatewp-affiliate-area-tabs/ folder
-				load_textdomain( 'affiliatewp-affiliate-area-tabs', $mofile_global );
-			} elseif ( file_exists( $mofile_local ) ) {
-				// Look in local /wp-content/plugins/affiliatewp-affiliate-area-tabs/languages/ folder
-				load_textdomain( 'affiliatewp-affiliate-area-tabs', $mofile_local );
-			} else {
-				// Load the default language files
-				load_plugin_textdomain( 'affiliatewp-affiliate-area-tabs', false, $lang_dir );
-			}
-		}
-
-		/**
-		 * Include necessary files
-		 *
-		 * @access      private
-		 * @since       1.0.0
-		 * @return      void
-		 */
-		private function includes() {
-
-			// Functions class.
-			require_once AFFWP_AAT_PLUGIN_DIR . 'includes/class-functions.php';
-
-			// Upgrade class.
-			require_once AFFWP_AAT_PLUGIN_DIR . 'includes/class-upgrades.php';
-
-			/**
-			 * Compatibility class.
-			 * This provides compatibility with AffiliateWP v1.8 - v2.1.6.1
-			 */
-			if ( $this->has_1_8() && ! $this->has_2_1_7() ) {
-				require_once AFFWP_AAT_PLUGIN_DIR . 'includes/class-compatibility.php';
-			}
-
-			// Admin class.
+		public function setup_objects() {
 			if ( is_admin() ) {
-				require_once AFFWP_AAT_PLUGIN_DIR . 'includes/class-admin.php';
+				self::$instance->admin = new Core\Admin;
 			}
 
+			self::$instance->assets = new Core\Assets_Loader;
 		}
 
 		/**
-		 * Setup the default hooks and actions
+		 * Sets up the default hooks and actions.
 		 *
 		 * @since 1.0.0
 		 *
 		 * @return void
 		 */
 		private function hooks() {
-
-			// plugin meta
-			add_filter( 'plugin_row_meta', array( $this, 'plugin_meta' ), null, 2 );
-
 			// Render the tab content.
 			add_filter( 'affwp_render_affiliate_dashboard_tab', array( $this, 'render_custom_tab' ), 10, 2 );
 
 			// Redirect if non-affiliate tries to access a tab's page.
 			add_action( 'template_redirect', array( $this, 'redirect' ) );
-
-			// User has at least AffiliateWP version 2.1.7
-			if ( $this->has_2_1_7() ) {
-
-				/**
-				 * Filter the tabs in the Affiliate Area and in the admin.
-				 *
-				 * @since 1.1
-				 * @since 1.2 Increased priority to 9999 so we can better listen for other tabs being added. E.g. Direct Link Tracking.
-				 */
-				add_filter( 'affwp_affiliate_area_tabs', array( $this, 'affiliate_area_tabs' ), 9999 );
-
-			}
 
 			// Hide tabs in the Affiliate Area.
 			add_filter( 'affwp_affiliate_area_show_tab', array( $this, 'hide_existing_tabs' ), 10, 2 );
@@ -386,42 +359,6 @@ if ( ! class_exists( 'AffiliateWP_Affiliate_Area_Tabs' ) ) {
 		}
 
 		/**
-		 * Determine if the user is on version 1.8 of AffiliateWP or newer
-		 *
-		 * @since 1.1
-		 *
-		 * @return boolean
-		 */
-		public function has_1_8() {
-
-			$return = true;
-
-			if ( version_compare( AFFILIATEWP_VERSION, '1.8', '<' ) ) {
-				$return = false;
-			}
-
-			return $return;
-		}
-
-		/**
-		 * Determine if the user is on version 2.1.7 of AffiliateWP or later.
-		 *
-		 * @since 1.2
-		 *
-		 * @return boolean
-		 */
-		public function has_2_1_7() {
-
-			$return = true;
-
-			if ( version_compare( AFFILIATEWP_VERSION, '2.1.7', '<' ) ) {
-				$return = false;
-			}
-
-			return $return;
-		}
-
-		/**
 		 * Redirect to affiliate login page if content is accessed.
 		 *
 		 * @since 1.0.1
@@ -443,67 +380,17 @@ if ( ! class_exists( 'AffiliateWP_Affiliate_Area_Tabs' ) ) {
 
 		}
 
-
-
-		/**
-		 * Modify plugin metalinks.
-		 *
-		 * @access      public
-		 * @since       1.0.0
-		 * @param       array $links The current links array
-		 * @param       string $file A specific plugin table entry
-		 * @return      array $links The modified links array
-		 */
-		public function plugin_meta( $links, $file ) {
-		    if ( $file == plugin_basename( __FILE__ ) ) {
-		        $plugins_link = array(
-		            '<a title="' . __( 'Get more add-ons for AffiliateWP', 'affiliatewp-affiliate-area-tabs' ) . '" href="'. admin_url( 'admin.php?page=affiliate-wp-add-ons' ) . '">' . __( 'More add-ons', 'affiliatewp-affiliate-area-tabs' ) . '</a>'
-		        );
-
-		        $links = array_merge( $links, $plugins_link );
-		    }
-
-		    return $links;
-		}
 	}
 
 	/**
-	 * The main function responsible for returning the one true AffiliateWP_Affiliate_Area_Tabs
-	 * Instance to functions everywhere.
+	 * Retrieves an instance of the plugin bootstrap.
 	 *
-	 * Use this function like you would a global variable, except without needing
-	 * to declare the global.
+	 * @since 1.0.0
 	 *
-	 * Example: <?php $affiliatewp_affiliate_area_tabs = affiliatewp_affiliate_area_tabs(); ?>
-	 *
-	 * @since 1.0
-	 * @return object The one true AffiliateWP_Affiliate_Area_Tabs Instance
+	 * @return WerdsWords_Affiliate_Portal_Tabs Plugin instance.
 	 */
-	function affiliatewp_affiliate_area_tabs() {
-
-		if ( ! class_exists( 'Affiliate_WP' ) ) {
-
-			if ( ! class_exists( 'AffiliateWP_Activation' ) ) {
-				require_once 'includes/class-activation.php';
-			}
-
-			$activation = new AffiliateWP_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
-			$activation = $activation->run();
-
-		} elseif ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
-
-			if ( ! class_exists( 'AffiliateWP_Activation' ) ) {
-				require_once 'includes/class-activation.php';
-			}
-
-			$activation = new AffiliateWP_Activation( plugin_dir_path( __FILE__ ), basename( __FILE__ ) );
-			$activation = $activation->below_php_version();
-
-		} else {
-			return AffiliateWP_Affiliate_Area_Tabs::instance();
-		}
-
+	function ww_affiliate_portal_tabs() {
+		return WerdsWords_Affiliate_Portal_Tabs::instance();
 	}
-	add_action( 'plugins_loaded', 'affiliatewp_affiliate_area_tabs', 100 );
 
 }
